@@ -5,8 +5,12 @@ import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 const kv = await Deno.openKv();
 const JWT_SECRET_KEY = Deno.env.get("JWT_SECRET_KEY") || "default-secret-key";
 
+function getKey() {
+  return new TextEncoder().encode(JWT_SECRET_KEY);
+}
+
 async function generateToken(username: string) {
-  const key = new TextEncoder().encode(JWT_SECRET_KEY);
+  const key = getKey();
   const payload = {
     iss: username,
     exp: getNumericDate(60 * 60),
@@ -17,7 +21,7 @@ async function generateToken(username: string) {
 async function getUsernameFromToken(token: string | undefined): Promise<string | null> {
   if (!token) return null;
   try {
-    const key = new TextEncoder().encode(JWT_SECRET_KEY);
+    const key = getKey();
     const payload = await verify(token, key, "HS256");
     return payload.iss as string;
   } catch {
@@ -116,7 +120,7 @@ serve(async (req) => {
     return await handleSendMessage(req);
   } else if (req.method === "GET" && url.pathname === "/messages") {
     return await handleGetMessages(req);
-  } else if (req.method === "DELETE" && url.pathname === "/delete") {
+  } else if (req.method === "GET" && url.pathname === "/delete") {
     return await handleDelete(req);
   }
 
