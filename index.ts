@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.202.0/http/server.ts";
 import { create, getNumericDate, verify } from "https://deno.land/x/djwt@v2.4/mod.ts";
-import { hash, compare } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const kv = await Deno.openKv();
@@ -32,7 +32,7 @@ async function handleSignup(req: Request) {
     return new Response(JSON.stringify({ error: "User already exists" }), { status: 409 });
   }
 
-  const hashedPassword = await hash(password);
+  const hashedPassword = await bcrypt.hash(password);
   await kv.set(["users", username], { username, password: hashedPassword });
 
   return new Response(JSON.stringify({ message: "User registered successfully" }), { status: 201 });
@@ -42,7 +42,7 @@ async function handleLogin(req: Request) {
   const { username, password } = await req.json();
   const user = await kv.get(["users", username]);
 
-  if (!user.value || !(await compare(password, user.value.password))) {
+  if (!user.value || !(await bcrypt.compare(password, user.value.password))) {
     return new Response(JSON.stringify({ error: "Invalid username or password" }), { status: 401 });
   }
 
