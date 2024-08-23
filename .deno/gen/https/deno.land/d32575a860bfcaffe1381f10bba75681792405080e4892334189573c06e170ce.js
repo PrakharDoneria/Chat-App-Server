@@ -1,0 +1,5 @@
+import { configAsync } from "./mod.ts";
+await configAsync({
+  export: true
+});
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImh0dHBzOi8vZGVuby5sYW5kL3gvZG90ZW52QHYzLjIuMi9sb2FkLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGNvbmZpZ0FzeW5jIH0gZnJvbSBcIi4vbW9kLnRzXCI7XG5cbmF3YWl0IGNvbmZpZ0FzeW5jKHsgZXhwb3J0OiB0cnVlIH0pO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLFNBQVMsV0FBVyxRQUFRLFdBQVc7QUFFdkMsTUFBTSxZQUFZO0VBQUUsUUFBUTtBQUFLIn0=

@@ -1,0 +1,16 @@
+{
+  "version": "3",
+  "remote": {
+    "https://deno.land/std@0.105.0/encoding/base64.ts": "eecae390f1f1d1cae6f6c6d732ede5276bf4b9cd29b1d281678c054dc5cc009e",
+    "https://deno.land/std@0.105.0/encoding/base64url.ts": "7160c189140857342eb34a1fb4b9c7fc566d61f4d1d2586054966c8860b14c6a",
+    "https://deno.land/std@0.202.0/async/delay.ts": "a6142eb44cdd856b645086af2b811b1fcce08ec06bb7d50969e6a872ee9b8659",
+    "https://deno.land/std@0.202.0/http/server.ts": "1b2403b3c544c0624ad23e8ca4e05877e65380d9e0d75d04957432d65c3d5f41",
+    "https://deno.land/x/djwt@v2.4/algorithm.ts": "c33b94d2fc82f5afc92a676ef61049dd86fc8445d9caefc60570372ad20c0016",
+    "https://deno.land/x/djwt@v2.4/deps.ts": "c86e2f5c16a943b7f8c1a451dc1aa62684188d5e1929afaa4433460a1936195b",
+    "https://deno.land/x/djwt@v2.4/mod.ts": "d7c0f05688a9bd9ee60a33c131dd9f9ae19f82852262eb119377a2a09036905f",
+    "https://deno.land/x/djwt@v2.4/signature.ts": "f79b4e521cd6a6dff28cd2779b1d9f2059f9e0822fb99c9f747ff34ae26532e4",
+    "https://deno.land/x/dotenv@v3.2.2/load.ts": "cbd76a0aee01aad8d09222afaa1dd04b84d9d3e44637503b01bf77a91df9e041",
+    "https://deno.land/x/dotenv@v3.2.2/mod.ts": "077b48773de9205266a0b44c3c3a3c3083449ed64bb0b6cc461b95720678d38e",
+    "https://deno.land/x/dotenv@v3.2.2/util.ts": "693730877b13f8ead2b79b2aa31e2a0652862f7dc0c5f6d2f313f4d39c7b7670"
+  }
+}

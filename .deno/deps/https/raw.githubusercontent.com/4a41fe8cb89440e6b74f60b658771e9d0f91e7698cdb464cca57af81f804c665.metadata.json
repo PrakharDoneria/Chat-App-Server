@@ -1,0 +1,31 @@
+{
+  "headers": {
+    "cache-control": "max-age=300",
+    "vary": "Authorization,Accept-Encoding,Origin",
+    "access-control-allow-origin": "*",
+    "x-xss-protection": "1; mode=block",
+    "via": "1.1 varnish",
+    "cross-origin-resource-policy": "cross-origin",
+    "x-github-request-id": "E680:F3983:4DA92:55079:66BF8C45",
+    "x-served-by": "cache-chi-klot8100150-CHI",
+    "x-cache": "MISS",
+    "strict-transport-security": "max-age=31536000",
+    "expires": "Fri, 16 Aug 2024 17:33:40 GMT",
+    "source-age": "0",
+    "x-frame-options": "deny",
+    "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+    "date": "Fri, 16 Aug 2024 17:28:40 GMT",
+    "accept-ranges": "bytes",
+    "x-cache-hits": "0",
+    "x-fastly-request-id": "ed1771d82d1b10846eef1f02375ea5ed62232b6a",
+    "x-content-type-options": "nosniff",
+    "etag": "W/\"0eef3b8ae7cd80017f1329c24f9059cfd57178173f16e525b20d862bdee59474\"",
+    "content-type": "text/plain; charset=utf-8",
+    "x-timer": "S1723829321.569044,VS0,VE96"
+  },
+  "url": "https://raw.githubusercontent.com/NMathar/deno-express/master/src/simplePathMatcher.ts",
+  "now": {
+    "secs_since_epoch": 1723829320,
+    "nanos_since_epoch": 677726434
+  }
+}

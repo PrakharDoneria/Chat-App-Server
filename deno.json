@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.ns", "dom"]
+  },
+  "tasks": {
+    "start": "deno run --allow-net --allow-env --allow-read --allow-write index.ts"
+  },
+  "fmt": {
+    "options": {
+      "useTabs": false,
+      "indentWidth": 2,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  }
+}
