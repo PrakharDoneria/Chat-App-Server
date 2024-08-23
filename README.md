@@ -1,225 +1,77 @@
-# Group Chat Application
-
-This is a simple group chat application built with Deno and Deno KV storage. The application allows users to sign up, log in, and send and retrieve messages in predefined groups.
-
-## Prerequisites
-
-- [Deno](https://deno.land/)
-- Create a `.env` file in the root directory with your JWT secret key:
-  ```
-  JWT_SECRET_KEY=your-very-secure-secret-key
-  ```
-
-## Installation
-
-Clone the repository and navigate to the project directory:
-
-```bash
-git clone https://github.com/PrakharDoneria/Chat-App-Server
-cd Chat-App-Server
-```
-
-Install the necessary dependencies (if any).
-
-## Running the Application
-
-You can start the server using Deno's task runner:
-
-```bash
-deno task start
-```
-
-The server will start on `http://localhost:8000`.
-
 ## Endpoints
 
-### 1. User Signup
+### User Management
 
-**Endpoint:**
-
-- `POST /signup`
-
-**Request Body:**
-
-```json
-{
-  "username": "ada",
-  "password": "securepassword"
-}
-```
-
-**Headers:**
-
-- `Content-Type: application/json`
-
-**Sample cURL Request:**
-
-```bash
-curl -X POST http://localhost:8000/signup \
--H "Content-Type: application/json" \
--d '{
-  "username": "ada",
-  "password": "securepassword"
-}'
-```
-
-**Response (Success):**
-
-```json
-{
-  "message": "User registered successfully"
-}
-```
-
-**Response (User Already Exists):**
-
-```json
-{
-  "error": "User already exists"
-}
-```
-
-### 2. User Login
-
-**Endpoint:**
-
-- `POST /login`
+#### POST `/signup`
+Registers a new user with a username and password.
 
 **Request Body:**
-
 ```json
 {
-  "username": "ada",
-  "password": "securepassword"
+  "username": "string",
+  "password": "string"
 }
 ```
 
-**Headers:**
+**Response:**
+- `201 Created`: User registered successfully.
+- `409 Conflict`: User already exists.
 
-- `Content-Type: application/json`
-
-**Sample cURL Request:**
-
-```bash
-curl -X POST http://localhost:8000/login \
--H "Content-Type: application/json" \
--d '{
-  "username": "ada",
-  "password": "securepassword"
-}'
-```
-
-**Response (Success):**
-
-```json
-{
-  "message": "Login successful",
-  "token": "<jwt_token_here>"
-}
-```
-
-**Response (Invalid Credentials):**
-
-```json
-{
-  "error": "Invalid username or password"
-}
-```
-
-### 3. Send Message to Group
-
-**Endpoint:**
-
-- `POST /send-message`
+#### POST `/login`
+Logs in a user with a username and password.
 
 **Request Body:**
-
 ```json
 {
-  "groupName": "developers",
-  "message": "Hello, developers!"
+  "username": "string",
+  "password": "string"
 }
 ```
 
-**Headers:**
+**Response:**
+- `200 OK`: Login successful.
+- `401 Unauthorized`: Invalid username or password.
 
-- `Authorization: Bearer <jwt_token_here>`
-- `Content-Type: application/json`
+### Messaging
 
-**Sample cURL Request:**
+#### POST `/send-message`
+Sends a message to a specified group.
 
-```bash
-curl -X POST http://localhost:8000/send-message \
--H "Authorization: Bearer <jwt_token_here>" \
--H "Content-Type: application/json" \
--d '{
-  "groupName": "developers",
-  "message": "Hello, developers!"
-}'
-```
-
-**Response (Success):**
-
+**Request Body:**
 ```json
 {
-  "message": "Message sent successfully"
+  "username": "string",
+  "groupName": "string",
+  "message": "string"
 }
 ```
 
-**Response (Invalid or Missing Token):**
+**Response:**
+- `200 OK`: Message sent successfully.
 
-```json
-{
-  "error": "Invalid or missing token"
-}
-```
+#### GET `/messages`
+Retrieves messages from a specified group.
 
-### 4. Get Messages from Group
+**Query Parameters:**
+- `groupName`: The name of the group to retrieve messages from.
 
-**Endpoint:**
+**Response:**
+- `200 OK`: A list of messages.
 
-- `GET /messages?groupName=<groupName>`
+### Data Management
 
-**Headers:**
+#### DELETE `/delete`
+Deletes all accounts or all messages based on the `type` parameter.
 
-- `Authorization: Bearer <jwt_token_here>`
+**Query Parameters:**
+- `type`: 
+  - `accounts` to delete all user accounts.
+  - `msgs` to delete all messages.
 
-**Sample cURL Request:**
+**Response:**
+- `200 OK`: Successful deletion of data.
+- `400 Bad Request`: Invalid `type` parameter.
 
-```bash
-curl -X GET http://localhost:8000/messages?groupName=developers \
--H "Authorization: Bearer <jwt_token_here>"
-```
 
-**Response (Success):**
 
-```json
-[
-  {
-    "from": "ada",
-    "message": "Hello, developers!",
-    "timestamp": "2024-08-23T15:30:00Z"
-  },
-  {
-    "from": "charles",
-    "message": "Hi Ada!",
-    "timestamp": "2024-08-23T15:31:00Z"
-  }
-]
-```
-
-**Response (Invalid or Missing Token):**
-
-```json
-{
-  "error": "Invalid or missing token"
-}
-```
-
-## Environment Variables
-
-Ensure you have a `.env` file with the following content:
-
-```
-JWT_SECRET_KEY=your-very-secure-secret-key
-```
+The server will start on port 8000.
