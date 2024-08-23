@@ -29,10 +29,17 @@ async function handleLogin(req: Request) {
 
 async function handleSendMessage(req: Request) {
   const { username, groupName, message } = await req.json();
-  // No authentication logic
   const timestamp = new Date().toISOString();
   const key = ["messages", groupName, timestamp];
   const value = { from: username, message, timestamp };
+
+  const messages = [];
+  for await (const entry of kv.list({ prefix: ["messages", groupName] })) {
+    messages.push(entry.key);
+  }
+  if (messages.length >= 25) {
+    await kv.delete(messages[0]); // Delete the oldest message
+  }
 
   await kv.set(key, value);
 
@@ -70,6 +77,27 @@ async function handleDelete(req: Request) {
   }
 }
 
+async function handleRemove(req: Request) {
+  const { username, password } = await req.json();
+  const user = await kv.get(["users", username]);
+
+  if (!user.value || user.value.password !== password) {
+    return new Response(JSON.stringify({ error: "Invalid username or password" }), { status: 401 });
+  }
+
+  
+  for await (const entry of kv.list({ prefix: ["messages"] })) {
+    if (entry.value.from === username) {
+      await kv.delete(entry.key);
+    }
+  }
+
+  
+  await kv.delete(["users", username]);
+
+  return new Response(JSON.stringify({ message: "User and all related data removed successfully" }), { status: 200 });
+}
+
 serve(async (req) => {
   const url = new URL(req.url);
 
@@ -83,6 +111,8 @@ serve(async (req) => {
     return await handleGetMessages(req);
   } else if (req.method === "GET" && url.pathname === "/delete") {
     return await handleDelete(req);
+  } else if (req.method === "POST" && url.pathname === "/remove") {
+    return await handleRemove(req);
   }
 
   return new Response("Not Found", { status: 404 });
