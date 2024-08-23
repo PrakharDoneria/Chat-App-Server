@@ -28,11 +28,11 @@ async function handleLogin(req: Request) {
 }
 
 async function handleSendMessage(req: Request) {
-  const { groupName, message } = await req.json();
+  const { username, groupName, message } = await req.json();
   // No authentication logic
   const timestamp = new Date().toISOString();
   const key = ["messages", groupName, timestamp];
-  const value = { message, timestamp };
+  const value = { from: username, message, timestamp };
 
   await kv.set(key, value);
 
