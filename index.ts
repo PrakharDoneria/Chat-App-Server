@@ -6,8 +6,8 @@ const kv = await Deno.openKv();
 const JWT_SECRET_KEY = Deno.env.get("JWT_SECRET_KEY") || "default-secret-key";
 const SALT_LENGTH = 16;
 const ITERATIONS = 100000;
-const KEY_LENGTH = 64;
-const DIGEST = "sha256";
+const KEY_LENGTH = 32; // Adjusted key length to 32 bytes
+const DIGEST = "SHA-256";
 
 async function hashPassword(password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
@@ -27,15 +27,15 @@ async function hashPassword(password: string): Promise<string> {
       name: "PBKDF2",
       salt: salt,
       iterations: ITERATIONS,
-      hash: DIGEST
+      hash: "SHA-256"  // Correct hash algorithm name
     },
     key,
-    { name: "HMAC", hash: DIGEST, length: KEY_LENGTH * 8 },
+    { name: "HMAC", hash: "SHA-256", length: KEY_LENGTH * 8 },
     false,
     ["sign"]
   );
 
-  const hashBuffer = await crypto.subtle.sign(DIGEST, derivedKey, passwordBytes);
+  const hashBuffer = await crypto.subtle.sign("HMAC", derivedKey, passwordBytes);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -62,15 +62,15 @@ async function verifyPassword(password: string, storedHash: string): Promise<boo
       name: "PBKDF2",
       salt: salt,
       iterations: ITERATIONS,
-      hash: DIGEST
+      hash: "SHA-256"  // Correct hash algorithm name
     },
     key,
-    { name: "HMAC", hash: DIGEST, length: KEY_LENGTH * 8 },
+    { name: "HMAC", hash: "SHA-256", length: KEY_LENGTH * 8 },
     false,
     ["sign"]
   );
 
-  const hashBuffer = await crypto.subtle.sign(DIGEST, derivedKey, passwordBytes);
+  const hashBuffer = await crypto.subtle.sign("HMAC", derivedKey, passwordBytes);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hashCheckHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
