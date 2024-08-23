@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.202.0/http/server.ts";
 import { create, getNumericDate, verify } from "https://deno.land/x/djwt@v2.4/mod.ts";
+import { hash, compare } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const kv = await Deno.openKv();
@@ -21,6 +22,32 @@ async function getUsernameFromToken(token: string | undefined): Promise<string |
   } catch {
     return null;
   }
+}
+
+async function handleSignup(req: Request) {
+  const { username, password } = await req.json();
+  const existingUser = await kv.get(["users", username]);
+
+  if (existingUser.value) {
+    return new Response(JSON.stringify({ error: "User already exists" }), { status: 409 });
+  }
+
+  const hashedPassword = await hash(password);
+  await kv.set(["users", username], { username, password: hashedPassword });
+
+  return new Response(JSON.stringify({ message: "User registered successfully" }), { status: 201 });
+}
+
+async function handleLogin(req: Request) {
+  const { username, password } = await req.json();
+  const user = await kv.get(["users", username]);
+
+  if (!user.value || !(await compare(password, user.value.password))) {
+    return new Response(JSON.stringify({ error: "Invalid username or password" }), { status: 401 });
+  }
+
+  const token = await generateToken(username);
+  return new Response(JSON.stringify({ message: "Login successful", token }), { status: 200 });
 }
 
 async function handleSendMessage(req: Request) {
@@ -62,7 +89,11 @@ async function handleGetMessages(req: Request) {
 serve(async (req) => {
   const url = new URL(req.url);
 
-  if (req.method === "POST" && url.pathname === "/send-message") {
+  if (req.method === "POST" && url.pathname === "/signup") {
+    return await handleSignup(req);
+  } else if (req.method === "POST" && url.pathname === "/login") {
+    return await handleLogin(req);
+  } else if (req.method === "POST" && url.pathname === "/send-message") {
     return await handleSendMessage(req);
   } else if (req.method === "GET" && url.pathname === "/messages") {
     return await handleGetMessages(req);

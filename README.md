@@ -1,6 +1,6 @@
 # Group Chat Application
 
-This is a simple group chat application built with Deno and Deno KV storage. The application allows users to send and retrieve messages in predefined groups.
+This is a simple group chat application built with Deno and Deno KV storage. The application allows users to sign up, log in, and send and retrieve messages in predefined groups.
 
 ## Prerequisites
 
@@ -15,8 +15,8 @@ This is a simple group chat application built with Deno and Deno KV storage. The
 Clone the repository and navigate to the project directory:
 
 ```bash
-git clone https://github.com/your-username/group-chat-app.git
-cd group-chat-app
+git clone https://github.com/PrakharDoneria/Chat-App-Server
+cd Chat-App-Server
 ```
 
 Install the necessary dependencies (if any).
@@ -33,7 +33,100 @@ The server will start on `http://localhost:8000`.
 
 ## Endpoints
 
-### 1. Send Message to Group
+### 1. User Signup
+
+**Endpoint:**
+
+- `POST /signup`
+
+**Request Body:**
+
+```json
+{
+  "username": "ada",
+  "password": "securepassword"
+}
+```
+
+**Headers:**
+
+- `Content-Type: application/json`
+
+**Sample cURL Request:**
+
+```bash
+curl -X POST http://localhost:8000/signup \
+-H "Content-Type: application/json" \
+-d '{
+  "username": "ada",
+  "password": "securepassword"
+}'
+```
+
+**Response (Success):**
+
+```json
+{
+  "message": "User registered successfully"
+}
+```
+
+**Response (User Already Exists):**
+
+```json
+{
+  "error": "User already exists"
+}
+```
+
+### 2. User Login
+
+**Endpoint:**
+
+- `POST /login`
+
+**Request Body:**
+
+```json
+{
+  "username": "ada",
+  "password": "securepassword"
+}
+```
+
+**Headers:**
+
+- `Content-Type: application/json`
+
+**Sample cURL Request:**
+
+```bash
+curl -X POST http://localhost:8000/login \
+-H "Content-Type: application/json" \
+-d '{
+  "username": "ada",
+  "password": "securepassword"
+}'
+```
+
+**Response (Success):**
+
+```json
+{
+  "message": "Login successful",
+  "token": "<jwt_token_here>"
+}
+```
+
+**Response (Invalid Credentials):**
+
+```json
+{
+  "error": "Invalid username or password"
+}
+```
+
+### 3. Send Message to Group
 
 **Endpoint:**
 
@@ -81,7 +174,7 @@ curl -X POST http://localhost:8000/send-message \
 }
 ```
 
-### 2. Get Messages from Group
+### 4. Get Messages from Group
 
 **Endpoint:**
 
