@@ -6,7 +6,7 @@ const kv = await Deno.openKv();
 const JWT_SECRET_KEY = Deno.env.get("JWT_SECRET_KEY") || "default-secret-key";
 const SALT_LENGTH = 16;
 const ITERATIONS = 100000;
-const KEY_LENGTH = 32; // Adjusted key length to 32 bytes
+const KEY_LENGTH = 32;
 const DIGEST = "SHA-256";
 
 async function hashPassword(password: string): Promise<string> {
@@ -27,7 +27,7 @@ async function hashPassword(password: string): Promise<string> {
       name: "PBKDF2",
       salt: salt,
       iterations: ITERATIONS,
-      hash: "SHA-256"  // Correct hash algorithm name
+      hash: "SHA-256"
     },
     key,
     { name: "HMAC", hash: "SHA-256", length: KEY_LENGTH * 8 },
@@ -62,7 +62,7 @@ async function verifyPassword(password: string, storedHash: string): Promise<boo
       name: "PBKDF2",
       salt: salt,
       iterations: ITERATIONS,
-      hash: "SHA-256"  // Correct hash algorithm name
+      hash: "SHA-256"
     },
     key,
     { name: "HMAC", hash: "SHA-256", length: KEY_LENGTH * 8 },
@@ -78,17 +78,19 @@ async function verifyPassword(password: string, storedHash: string): Promise<boo
 }
 
 async function generateToken(username: string) {
+  const key = new TextEncoder().encode(JWT_SECRET_KEY);
   const payload = {
     iss: username,
     exp: getNumericDate(60 * 60),
   };
-  return await create({ alg: "HS256", typ: "JWT" }, payload, JWT_SECRET_KEY);
+  return await create({ alg: "HS256", typ: "JWT" }, payload, key);
 }
 
 async function getUsernameFromToken(token: string | undefined): Promise<string | null> {
   if (!token) return null;
   try {
-    const payload = await verify(token, JWT_SECRET_KEY, "HS256");
+    const key = new TextEncoder().encode(JWT_SECRET_KEY);
+    const payload = await verify(token, key, "HS256");
     return payload.iss as string;
   } catch {
     return null;
@@ -157,6 +159,25 @@ async function handleGetMessages(req: Request) {
   return new Response(JSON.stringify(messages), { status: 200 });
 }
 
+async function handleDelete(req: Request) {
+  const url = new URL(req.url);
+  const type = url.searchParams.get("type");
+
+  if (type === "accounts") {
+    for await (const entry of kv.list({ prefix: ["users"] })) {
+      await kv.delete(entry.key);
+    }
+    return new Response(JSON.stringify({ message: "All accounts deleted successfully" }), { status: 200 });
+  } else if (type === "msgs") {
+    for await (const entry of kv.list({ prefix: ["messages"] })) {
+      await kv.delete(entry.key);
+    }
+    return new Response(JSON.stringify({ message: "All messages deleted successfully" }), { status: 200 });
+  } else {
+    return new Response(JSON.stringify({ error: "Invalid type parameter" }), { status: 400 });
+  }
+}
+
 serve(async (req) => {
   const url = new URL(req.url);
 
@@ -168,6 +189,8 @@ serve(async (req) => {
     return await handleSendMessage(req);
   } else if (req.method === "GET" && url.pathname === "/messages") {
     return await handleGetMessages(req);
+  } else if (req.method === "DELETE" && url.pathname === "/delete") {
+    return await handleDelete(req);
   }
 
   return new Response("Not Found", { status: 404 });
